@@ -126,9 +126,28 @@ app_license = "MIT"
 # Overriding Methods
 # ------------------------------
 #
+# Overriding Methods
+# ------------------------------
+override_doctype_class = {
+	"Stock Entry": "qubix_custom.overrides.CustomStockEntry"
+}
 # override_whitelisted_methods = {
 # 	"frappe.desk.doctype.event.event.get_events": "qubix_custom.event.get_events"
 # }
+
+
+from qubix_custom.batch_valuation_overrides import get_supplied_items_cost,set_incoming_rate_buying,set_incoming_rate_selling,get_rate_for_return,get_incoming_rate,process_sle,get_args_for_incoming_rate
+import erpnext
+# Selling controllers
+from erpnext.controllers.selling_controller import SellingController
+SellingController.set_incoming_rate = set_incoming_rate_selling
+
+# stock_ledger
+from erpnext.stock.stock_ledger import update_entries_after
+update_entries_after.process_sle =  process_sle
+# stock entry
+from erpnext.stock.doctype.stock_entry.stock_entry import StockEntry
+StockEntry.get_args_for_incoming_rate = get_args_for_incoming_rate
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
