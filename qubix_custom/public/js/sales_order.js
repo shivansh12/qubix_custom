@@ -116,7 +116,7 @@ frappe.ui.form.on("Sales Order", "refresh", function(frm) {
     });
     
     
-    /*
+    
     //Hide Few buttons for mso & stockist
     frappe.ui.form.on('Sales Order', {
         refresh(frm) {
@@ -128,7 +128,7 @@ frappe.ui.form.on("Sales Order", "refresh", function(frm) {
             frm.remove_custom_button('Update Items');
         }
         });
-    */
+    
     
     
     //Display Customer Outstanding Balance
