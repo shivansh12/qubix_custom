@@ -62,15 +62,28 @@ frappe.ui.form.on("Sales Order", "refresh", function(frm) {
             
     
     //Hide Update Items button to stockists
-    // frappe.ui.form.on('Sales Order', {
-    // refresh(frm) {
-    // if (frappe.user_roles.indexOf("Stockist")!=-1) {
-    // setTimeout(() => {
-    // frm.remove_custom_button('Update Items');
-    // }, 10);
-    // }
-    // }
-    // });
+    frappe.ui.form.on('Sales Order', {
+    refresh(frm) {
+    if (frappe.user_roles.indexOf("Stockist")!=-1) {
+    setTimeout(() => {
+    frm.remove_custom_button('Update Items');
+    }, 10);
+    }
+    }
+    });
+
+
+    // for free goods if rate is 0
+    frappe.ui.form.on("Sales Order", "validate", function(frm, cdt, cdn) {
+        
+        $.each(frm.doc.items || [], function(i, d) {
+        if (d.rate>0.1){
+            d.is_free_item=0;
+    
+        }
+        });
+        
+         });
     
     
     
@@ -118,16 +131,16 @@ frappe.ui.form.on("Sales Order", "refresh", function(frm) {
     
     
     //Hide Few buttons for mso & stockist
-    frappe.ui.form.on('Sales Order', {
-        refresh(frm) {
-            if(frm.doc.sales_invoice_no != null)
-            frm.disable_Create();
-            frm.remove_custom_button('Update Items');
-            if(frappe.user.roles.indexOf("Stockist")!=-1)
-            frm.disable_Create();
-            frm.remove_custom_button('Update Items');
-        }
-        });
+    // frappe.ui.form.on('Sales Order', {
+    //     refresh(frm) {
+    //         if(frm.doc.sales_invoice_no != null)
+    //         frm.disable_Create();
+    //         frm.remove_custom_button('Update Items');
+    //         if(frappe.user.roles.indexOf("Stockist")!=-1)
+    //         frm.disable_Create();
+    //         frm.remove_custom_button('Update Items');
+    //     }
+    //     });
     
     
     
