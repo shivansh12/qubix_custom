@@ -341,3 +341,84 @@ def get_rate_for_return(voucher_type, voucher_no, item_code, return_against=None
         select_field = "abs(stock_value_difference / actual_qty)"
 
     return flt(frappe.db.get_value("Stock Ledger Entry", filters, select_field))
+
+#Delivery Note Price list rate from Batch price
+
+from erpnext.stock import get_item_details as _get_item_details
+
+def get_price_list_rate_for(args, item_code):
+    from erpnext.stock.get_item_details import get_item_price as _get_item_price,check_packing_list as _check_packing_list
+    from frappe.utils import flt as _flt
+
+    item_price_args = {
+        "item_code": item_code,
+        "price_list": args.get("price_list"),
+        # "price_list": "Standard Selling",
+        "customer": args.get("customer"),
+        "supplier": args.get("supplier"),
+        "uom": args.get("uom"),
+        "transaction_date": args.get("transaction_date"),
+        "batch_no": args.get("batch_no"),
+    }
+    batch_price = frappe.db.get_value("Batch",{"item": args.get("item_code"), "name": args.get("batch_no")},  "mrp")
+    # c_item_price_args = {
+    # 	"item_code": item_code,
+    # 	# "price_list": args.get("selling_price_list") or args.get("buying_price_list"),
+    # 	"price_list" : "Standard Selling" if args.get('doctype') in ['Quotation', 'Sales Order', 'Delivery Note', 'Sales Invoice'] else "Standard Buying",
+    # 	# "price_list": "Standard Selling",
+    # 	# "price_list":frappe.db.get_single_value("Selling Settings", "selling_price_list"),
+    # 	"customer": args.get("customer"),
+    # 	"supplier": args.get("supplier"),
+    # 	"uom": args.get("uom"),
+    # 	"transaction_date": args.get("transaction_date"),
+    # 	"batch_no": args.get("batch_no"),
+    # }
+    
+    item_price_data = 0
+    price_list_rate = _get_item_price(item_price_args, item_code)
+    if price_list_rate:
+        desired_qty = args.get("qty")
+        if desired_qty and _check_packing_list(price_list_rate[0][0], desired_qty, item_code):
+            item_price_data = price_list_rate
+    else:
+        for field in ["customer", "supplier"]:
+            del item_price_args[field]
+
+        general_price_list_rate = _get_item_price(
+            item_price_args, item_code, ignore_party=args.get("ignore_party")
+        )
+
+        if not general_price_list_rate and args.get("uom") != args.get("stock_uom"):
+            item_price_args["uom"] = args.get("stock_uom")
+            general_price_list_rate = _get_item_price(
+                item_price_args, item_code, ignore_party=args.get("ignore_party")
+            )
+
+        if general_price_list_rate:
+            item_price_data = general_price_list_rate
+
+    if item_price_data:
+        if batch_price:
+            # if item_price_data[0][2] == args.get("uom"):
+                # return item_price_data[0][1]
+                return batch_price
+        else:
+            if item_price_data[0][2] == args.get("uom"):
+                # return item_price_data[0][1]
+                return item_price_data[0][1]
+            elif not args.get("price_list_uom_dependant"):
+                # return _flt(item_price_data[0][1] * _flt(args.get("conversion_factor", 1)))
+                return _flt(item_price_data[0][1] * _flt(args.get("conversion_factor", 1)))
+            else:
+                return item_price_data[0][1]
+    else:
+        return item_price_data[0][1]
+    
+# _get_item_details.get_price_list_rate_for = get_price_list_rate_for
+
+@frappe.whitelist(allow_guest=True)
+def batch_price(batch_no):
+	if batch_no:
+		batch_price=frappe.get_all('Batch', filters={'name':batch_no}, fields=['mrp'],limit =1)
+        #		frappe.msgprint(str(rate))
+		return batch_price

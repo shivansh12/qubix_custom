@@ -31,7 +31,78 @@ app_license = "MIT"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {
+	"Purchase Order" : [
+		"public/js/purchase_order.js",
+		],
+	"Stock Entry" : [
+		"public/js/stock_entry.js",
+		],
+	"Delivery Note" :[
+		"public/js/delivery_note.js",
+	],
+#	"doctype" : "public/js/stock_entry.js",
+	"Sales Order" : [
+		"public/js/sales_order.js",
+	],
+	"Job Card" :[
+		"public/js/job_card.js",
+	],
+	"Work Order" : [
+		"public/js/work_order.js",
+	],
+	"Sales Invoice" : [
+		"public/js/sales_invoice.js",
+	],
+	"Material Request" : [
+		"public/js/material_request.js",
+	],
+	"Doctor Registration" : [
+		"public/js/doctor_registration.js",
+	],
+	"Survey Form" :[
+		"public/js/survey_form.js",
+	],
+	"Stock Reconciliation" : [
+		"public/js/stock_reconciliation.js",
+	],
+	"Batch" : [
+		"public/js/batch.js",
+		],
+
+	"Gate Entry" : [
+		"public/js/gate_entry.js",
+	],
+	"Lead" : [
+		"public/js/lead.js",
+	],
+	"Secondary Sales" : [
+		"public/js/secondary_sales.js",
+	],
+	"Visit Entry" : [
+		"public/js/visit_entry.js",
+	],
+	"Free Schemes" : [
+		"public/js/free_schemes.js",
+	],
+	"Customer" : [
+		"public/js/customer.js",
+	],
+	"Item" : [
+	
+		"public/js/item.js",
+	],
+	"Address" : [
+		"public/js/address.js",
+	],
+	"QR Code Scan" : [
+		"public/js/qr_code_scan.js",
+	],
+	"QR Code Master" : [
+		"public/js/qr_code_master.js",
+	],
+
+	}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -136,7 +207,7 @@ override_doctype_class = {
 # }
 
 
-from qubix_custom.batch_valuation_overrides import get_supplied_items_cost as _get_supplied_items_cost,set_incoming_rate_buying as _set_incoming_rate_buying,set_incoming_rate_selling as _set_incoming_rate_selling,get_rate_for_return as _get_rate_for_return,get_incoming_rate as _get_incoming_rate,process_sle as _process_sle,get_args_for_incoming_rate as _get_args_for_incoming_rate
+from qubix_custom.batch_valuation_overrides import get_supplied_items_cost as _get_supplied_items_cost,set_incoming_rate_buying as _set_incoming_rate_buying,set_incoming_rate_selling as _set_incoming_rate_selling,get_rate_for_return as _get_rate_for_return,get_incoming_rate as _get_incoming_rate,process_sle as _process_sle,get_args_for_incoming_rate as _get_args_for_incoming_rate,get_price_list_rate_for as _get_price_list_rate_for
 #import erpnext as _erpnext
 # Selling controllers
 from erpnext.controllers.selling_controller import SellingController as _SellingController
@@ -148,7 +219,12 @@ _update_entries_after.process_sle =  _process_sle
 # stock entry
 from erpnext.stock.doctype.stock_entry.stock_entry import StockEntry as _StockEntry
 _StockEntry.get_args_for_incoming_rate = _get_args_for_incoming_rate
-#
+
+import erpnext 
+erpnext.stock.utils.get_incoming_rate = _get_incoming_rate
+# #Batch_price
+# from erpnext.stock import get_item_details as _get_item_details
+# _get_item_details.get_price_list_rate_for = _get_price_list_rate_for
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
 # along with any modifications made in other Frappe apps
@@ -159,7 +235,6 @@ _StockEntry.get_args_for_incoming_rate = _get_args_for_incoming_rate
 # exempt linked doctypes from being automatically cancelled
 #
 # auto_cancel_exempted_doctypes = ["Auto Repeat"]
-
 
 # User Data Protection
 # --------------------
