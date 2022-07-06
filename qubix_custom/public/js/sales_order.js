@@ -73,18 +73,7 @@ frappe.ui.form.on("Sales Order", "refresh", function(frm) {
     });
 
 
-    // for free goods if rate is 0
-    frappe.ui.form.on("Sales Order", "validate", function(frm, cdt, cdn) {
-        
-        $.each(frm.doc.items || [], function(i, d) {
-        if (d.rate>0.1){
-            d.is_free_item=0;
-    
-        }
-        });
-        
-         });
-    
+   
     
     
     /*
@@ -206,5 +195,5 @@ frappe.ui.form.on("Sales Order", "refresh", function(frm) {
                 }
                 });
                 
-                 });
+    });
     
