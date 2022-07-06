@@ -82,16 +82,33 @@ frappe.ui.form.on("Delivery Note", "validate", function(frm, cdt, cdn) {
         });
         refresh_field("items");
          });
+ frappe.ui.form.on("Delivery Note", {
+                setup: function(frm) {
+                    frm.add_fetch("batch_no", "mrp", "price_list_rate")
+                }
+            });
+frappe.ui.form.on("Delivery Note", "onload", function(frm, cdt, cdn) {
+                $.each(frm.doc.items || [], function(i, d) {
+                    d.discount_amount=0;    
+                 if (d.is_free_item!=1){
+                  d.rate=d.price_list_rate-(d.price_list_rate*d.discount_percentage/100);
+          
+               }
+              });
+              refresh_field("items");
+               });  
+          
 frappe.ui.form.on("Delivery Note", "validate", function(frm, cdt, cdn) {
-        
-          $.each(frm.doc.items || [], function(i, d) {
-            if (d.is_free_item!=1){
+            $.each(frm.doc.items || [], function(i, d) {
+                d.discount_amount=0;    
+             if (d.is_free_item!=1){
               d.rate=d.price_list_rate-(d.price_list_rate*d.discount_percentage/100);
       
-          }
+           }
           });
-          refresh_field("d.discount_percentage");
-           });         
+          refresh_field("items");
+           });  
+      
 
 // frappe.ui.form.on('Delivery Note', {
 //           validate(frm,cdt,cdn){
